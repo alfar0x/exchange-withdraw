@@ -9,14 +9,17 @@ import {
   sleep,
 } from "@alfar/helpers";
 
-const SEC_TO_END = 8 * 60;
+const SEC_TO_END = 8 * 60 * 60;
 const APPROX_PERCENT = 10;
 
-const CHAIN = "ETH-zkSync Era";
-const NETWORK = "";
-const SYMBOL = "";
+// [key]
+const SYMBOL = "APT";
+// networks[key]
+const NETWORK = "APT";
+// network.id
+const CHAIN = "APT-Aptos";
 
-const { API_KEY, SECRET, PASSWORD } = process.env;
+const { API_KEY, SECRET, PASSWORD, FUNDING_PASSWORD } = process.env;
 
 const logger = initDefaultLogger("debug");
 
@@ -41,7 +44,16 @@ const main = async () => {
   const maxSleepSec =
     ((SEC_TO_END / data.length) * (100 + APPROX_PERCENT)) / 100;
 
-  logger.info(`fee ${fee}`);
+  const welcomeMsg = [
+    `fee ${fee}`,
+    `min sleep ${minSleepSec}s`,
+    `max sleep ${maxSleepSec}s`,
+    `lines found ${data.length}`,
+  ].join(" | ");
+
+  logger.info(welcomeMsg);
+
+  await sleep(10);
 
   for (let idx = 0; idx < data.length; idx += 1) {
     const [address, amountStr] = data[idx].split(",");
@@ -50,13 +62,11 @@ const main = async () => {
 
     try {
       const params = {
-        toAddress: address,
         chain: CHAIN,
-        dest: 4,
         fee,
-        pwd: "-",
-        amt: amount,
         network: NETWORK,
+        password: FUNDING_PASSWORD,
+        toAddress: address,
       };
 
       const response = await exchange.withdraw(
