@@ -1,0 +1,11 @@
+.vscode/
+input/
+logs/
+node_modules/
+output/
+yarn-error.log
+yarn.lock
+package-lock.json
+.env
+data.csv
+fees.json

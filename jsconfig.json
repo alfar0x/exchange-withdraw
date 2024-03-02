@@ -1,0 +1,9 @@
+{
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "checkJs": true,
+    "module": "CommonJS",
+    "target": "es2021"
+  },
+}
