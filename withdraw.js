@@ -9,15 +9,15 @@ import {
   sleep,
 } from "@alfar/helpers";
 
-const SEC_TO_END = 8 * 60 * 60;
+const MINUTES_TO_END = 20 * 60;
 const APPROX_PERCENT = 10;
 
 // [key]
-const SYMBOL = "APT";
+const SYMBOL = "ETH";
 // networks[key]
-const NETWORK = "APT";
+const NETWORK = "zkSync Era";
 // network.id
-const CHAIN = "APT-Aptos";
+const CHAIN = "ETH-zkSync Era";
 
 const { API_KEY, SECRET, PASSWORD, FUNDING_PASSWORD } = process.env;
 
@@ -38,11 +38,13 @@ const main = async () => {
 
   const { fee } = currencies[SYMBOL].networks[NETWORK];
 
-  const minSleepSec =
-    ((SEC_TO_END / data.length) * (100 - APPROX_PERCENT)) / 100;
+  const minSleepSec = Math.round(
+    (((MINUTES_TO_END / data.length) * (100 - APPROX_PERCENT)) / 100) * 60,
+  );
 
-  const maxSleepSec =
-    ((SEC_TO_END / data.length) * (100 + APPROX_PERCENT)) / 100;
+  const maxSleepSec = Math.round(
+    (((MINUTES_TO_END / data.length) * (100 + APPROX_PERCENT)) / 100) * 60,
+  );
 
   const welcomeMsg = [
     `fee ${fee}`,
