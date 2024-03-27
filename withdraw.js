@@ -9,15 +9,33 @@ import {
   sleep,
 } from "@alfar/helpers";
 
-const MINUTES_TO_END = 20 * 60;
-const APPROX_PERCENT = 10;
+const MINUTES_TO_END = (3 + 24 + 24 + 8) * 60;
+const APPROX_PERCENT = 50;
 
-// [key]
-const SYMBOL = "ETH";
-// networks[key]
-const NETWORK = "zkSync Era";
-// network.id
-const CHAIN = "ETH-zkSync Era";
+const FILE_PR_KEYS = "data.csv";
+
+// symbol - [key]
+// network - networks[key]
+// chain - network.id
+
+const tokens = {
+  era: {
+    eth: {
+      symbol: "ETH",
+      network: "zkSync Era",
+      chain: "ETH-zkSync Era",
+    },
+  },
+  polygon: {
+    matic: {
+      symbol: "MATIC",
+      network: "MATIC",
+      chain: "MATIC-Polygon",
+    },
+  },
+};
+
+const { symbol, network, chain } = tokens.polygon.matic;
 
 const { API_KEY, SECRET, PASSWORD, FUNDING_PASSWORD } = process.env;
 
@@ -32,11 +50,11 @@ const main = async () => {
     enableRateLimit: true,
   });
 
-  const data = readByLine("data.csv");
+  const data = readByLine(FILE_PR_KEYS);
 
   const currencies = await exchange.fetchCurrencies();
 
-  const { fee } = currencies[SYMBOL].networks[NETWORK];
+  const { fee } = currencies[symbol].networks[network];
 
   const minSleepSec = Math.round(
     (((MINUTES_TO_END / data.length) * (100 - APPROX_PERCENT)) / 100) * 60,
@@ -64,15 +82,15 @@ const main = async () => {
 
     try {
       const params = {
-        chain: CHAIN,
+        chain,
         fee,
-        network: NETWORK,
+        network,
         password: FUNDING_PASSWORD,
         toAddress: address,
       };
 
       const response = await exchange.withdraw(
-        SYMBOL,
+        symbol,
         amount,
         address,
         "",
