@@ -36,15 +36,11 @@ const main = async () => {
 
   const { fee } = currencies[symbol].networks[network];
 
-  const avgSleepSec = MINUTES_TO_END / data.length;
+  const avgSleepSec = (MINUTES_TO_END / data.length) * 60;
 
-  const minSleepSec = Math.round(
-    ((avgSleepSec * (100 - APPROX_PERCENT)) / 100) * 60
-  );
+  const minSleepSec = Math.round((avgSleepSec * (100 - APPROX_PERCENT)) / 100);
 
-  const maxSleepSec = Math.round(
-    ((avgSleepSec * (100 + APPROX_PERCENT)) / 100) * 60
-  );
+  const maxSleepSec = Math.round((avgSleepSec * (100 + APPROX_PERCENT)) / 100);
 
   const welcomeMsg = [
     `fee ${fee}`,
@@ -84,7 +80,7 @@ const main = async () => {
     }
 
     const sleepSec = randomInt(minSleepSec, maxSleepSec);
-    const endSec = (data.length - idx + 1) * avgSleepSec;
+    const endSec = (data.length - idx - 1) * avgSleepSec;
     logger.info(
       [
         `sleep until ${formatRel(sleepSec)}`,
