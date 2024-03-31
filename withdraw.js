@@ -8,34 +8,14 @@ import {
   readByLine,
   sleep,
 } from "@alfar/helpers";
+import tokens from "./tokens.js";
 
-const MINUTES_TO_END = (3 + 24 + 24 + 8) * 60;
+const MINUTES_TO_END = 3 * 24 * 60;
 const APPROX_PERCENT = 50;
 
 const FILE_PR_KEYS = "data.csv";
 
-// symbol - [key]
-// network - networks[key]
-// chain - network.id
-
-const tokens = {
-  era: {
-    eth: {
-      symbol: "ETH",
-      network: "zkSync Era",
-      chain: "ETH-zkSync Era",
-    },
-  },
-  polygon: {
-    matic: {
-      symbol: "MATIC",
-      network: "MATIC",
-      chain: "MATIC-Polygon",
-    },
-  },
-};
-
-const { symbol, network, chain } = tokens.polygon.matic;
+const { symbol, network, chain } = tokens.polygon.aptos;
 
 const { API_KEY, SECRET, PASSWORD, FUNDING_PASSWORD } = process.env;
 
