@@ -10,14 +10,14 @@ const tokens = {
       chain: "ETH-zkSync Era",
     },
   },
-  matic: {
+  polygon: {
     matic: {
       symbol: "MATIC",
       network: "MATIC",
       chain: "MATIC-Polygon",
     },
   },
-  apt: {
+  aptos: {
     apt: {
       symbol: "APT",
       network: "APT",
