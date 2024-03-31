@@ -12,10 +12,9 @@ import tokens from "./tokens.js";
 
 const MINUTES_TO_END = 3 * 24 * 60;
 const APPROX_PERCENT = 50;
+const { symbol, network, chain } = tokens.aptos.apt;
 
 const FILE_PR_KEYS = "data.csv";
-
-const { symbol, network, chain } = tokens.polygon.aptos;
 
 const { API_KEY, SECRET, PASSWORD, FUNDING_PASSWORD } = process.env;
 
