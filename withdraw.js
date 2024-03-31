@@ -36,12 +36,14 @@ const main = async () => {
 
   const { fee } = currencies[symbol].networks[network];
 
+  const avgSleepSec = MINUTES_TO_END / data.length;
+
   const minSleepSec = Math.round(
-    (((MINUTES_TO_END / data.length) * (100 - APPROX_PERCENT)) / 100) * 60,
+    ((avgSleepSec * (100 - APPROX_PERCENT)) / 100) * 60
   );
 
   const maxSleepSec = Math.round(
-    (((MINUTES_TO_END / data.length) * (100 + APPROX_PERCENT)) / 100) * 60,
+    ((avgSleepSec * (100 + APPROX_PERCENT)) / 100) * 60
   );
 
   const welcomeMsg = [
@@ -74,7 +76,7 @@ const main = async () => {
         amount,
         address,
         "",
-        params,
+        params
       );
       if (response.msg) throw new Error(response.msg);
     } catch (err) {
@@ -82,7 +84,13 @@ const main = async () => {
     }
 
     const sleepSec = randomInt(minSleepSec, maxSleepSec);
-    logger.info(`sleep until ${formatRel(sleepSec)}`);
+    const endSec = (data.length - idx + 1) * avgSleepSec;
+    logger.info(
+      [
+        `sleep until ${formatRel(sleepSec)}`,
+        `approx end ${formatRel(endSec)}`,
+      ].join(" | ")
+    );
     await sleep(sleepSec);
   }
 };
