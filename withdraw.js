@@ -10,9 +10,9 @@ import {
 } from "@alfar/helpers";
 import tokens from "./tokens.js";
 
-const MINUTES_TO_END = 3 * 24 * 60;
-const APPROX_PERCENT = 50;
-const { symbol, network, chain } = tokens.aptos.apt;
+const MINUTES_TO_END = 8 * 60;
+const APPROX_PERCENT = 10;
+const { symbol, network, chain } = tokens.linea.eth;
 
 const FILE_PR_KEYS = "data.csv";
 

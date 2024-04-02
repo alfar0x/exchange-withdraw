@@ -10,6 +10,13 @@ const tokens = {
       chain: "ETH-zkSync Era",
     },
   },
+  linea: {
+    eth: {
+      symbol: "ETH",
+      network: "Linea",
+      chain: "ETH-Linea",
+    },
+  },
   polygon: {
     matic: {
       symbol: "MATIC",
