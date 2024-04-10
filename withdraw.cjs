@@ -13,6 +13,15 @@ const config = {
 
 const sleep = (s) => new Promise((r) => setTimeout(r, Math.round(s * 1000)));
 
+const timenow = () => {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h24",
+  }).format(new Date(Date.now()));
+};
+
 const formatRelative = (seconds) => {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -124,7 +133,7 @@ const main = async () => {
   for (let idx = 0; idx < data.length; idx += 1) {
     const [address, amountStr] = data[idx].trim().split(",");
 
-    console.log(`${idx} ${address} ${amountStr}`);
+    console.log(`${timenow()} | ${idx} ${address} ${amountStr}`);
 
     try {
       await req("POST", "asset/withdrawal", {
