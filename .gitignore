@@ -1,11 +1,12 @@
+.env
 .vscode/
+*.csv
+fees.json
 input/
 logs/
 node_modules/
 output/
+package-lock.json
+withdraw.dev.cjs
 yarn-error.log
 yarn.lock
-package-lock.json
-.env
-*.csv
-fees.json
