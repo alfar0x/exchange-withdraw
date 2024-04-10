@@ -25,70 +25,57 @@ const formatRelative = (seconds) => {
 
 const formatDistance = (seconds) => {
   const units = ["s", "m", "h", "d"];
+
   const unitValues = [1, 60, 3600, 86400];
 
-  for (let i = units.length - 1; i >= 0; i--) {
-    const unit = units[i];
-    const unitValue = unitValues[i];
-    if (seconds >= unitValue) {
-      const value = Math.floor(seconds / unitValue);
-      return `${value}${unit}`;
-    }
-  }
+  const index = units.findLastIndex((_, idx) => seconds >= unitValues[idx]);
 
-  return "0s";
+  if (index === -1) return "0s";
+
+  return `${Math.floor(seconds / unitValues[index])}${units[index]}`;
 };
 
-const formatDate = (sec) => {
-  const relative = formatRelative(sec);
-  const distance = formatDistance(sec);
-  return `${relative} (${distance})`;
-};
+const formatDate = (sec) => `${formatRelative(sec)} (${formatDistance(sec)})`;
 
-const getHeaders = (method, path, body = "") => {
+const req = async (method, path, data) => {
+  const bodyStr = method === "POST" ? JSON.stringify(data) : "";
+
+  const query =
+    method === "GET" && data ? "?" + new URLSearchParams(data).toString() : "";
+
+  const fullpath = "/api/v5/" + path + query;
+
   const timestamp = new Date().toISOString();
 
-  const sign = createHmac("sha256", config.secret)
-    .update(`${timestamp}${method}${path}${body}`)
+  const signature = createHmac("sha256", config.secret)
+    .update(`${timestamp}${method}${fullpath}${bodyStr}`)
     .digest("base64");
 
-  return {
+  const headers = {
     "OK-ACCESS-KEY": config.apiKey,
     "OK-ACCESS-TIMESTAMP": timestamp,
     "OK-ACCESS-PASSPHRASE": config.password,
-    "OK-ACCESS-SIGN": sign,
+    "OK-ACCESS-SIGN": signature,
     Accept: "application/json",
     "Content-Type": "application/json",
   };
-};
 
-const req = async (path, options) => {
-  const response = await fetch("https://www.okx.com" + path, options);
+  const options = { method, headers };
+  if (method === "POST") options.body = bodyStr;
+
+  const response = await fetch("https://www.okx.com" + fullpath, options);
   if (!response.ok) throw new Error(response.statusText);
-  const data = await response.json();
-  if (data.msg) throw new Error(data.msg);
-  if (data.code !== "0") throw new Error(`error code: ${data.code}`);
-  return data.data;
-};
 
-const get = (path, params) => {
-  const method = "GET";
-  const query = params ? "?" + new URLSearchParams(params).toString() : "";
-  const fullpath = "/api/v5/" + path + query;
-  const headers = getHeaders(method, fullpath);
-  return req(fullpath, { method, headers });
-};
+  const json = await response.json();
 
-const post = (path, body = {}) => {
-  const method = "POST";
-  const str = JSON.stringify(body);
-  const fullpath = "/api/v5/" + path;
-  const headers = getHeaders(method, fullpath, str);
-  return req(fullpath, { method, headers, body: str });
+  if (json.msg) throw new Error(json.msg);
+  if (json.code !== "0") throw new Error(`error code: ${json.code}`);
+
+  return json.data;
 };
 
 const main = async () => {
-  const currencies = await get(`asset/currencies`);
+  const currencies = await req("GET", "asset/currencies");
 
   const currenciesStr = currencies
     .filter((c) => c.canWd)
@@ -103,10 +90,7 @@ const main = async () => {
   );
 
   if (!currency) throw new Error("currency is not found");
-
   if (!currency.canWd) throw new Error("currency is not withdrawable");
-
-  const fee = currency.minFee;
 
   const data = fs
     .readFileSync("data.csv", { encoding: "utf-8" })
@@ -126,7 +110,7 @@ const main = async () => {
   const welcomeMsg = [
     `ccy ${config.ccy}`,
     `chain ${config.chain}`,
-    `fee ${fee}`,
+    `fee ${currency.minFee}`,
     `accounts ${data.length}`,
     `min sleep ~ ${formatDistance(minSleepSec)}`,
     `max sleep ~ ${formatDistance(maxSleepSec)}`,
@@ -143,12 +127,12 @@ const main = async () => {
     console.log(`${idx} ${address} ${amountStr}`);
 
     try {
-      await post("asset/withdrawal", {
+      await req("POST", "asset/withdrawal", {
         ccy: config.ccy,
         amt: amountStr,
         dest: 4,
         toAddr: address,
-        fee: fee,
+        fee: currency.minFee,
         chain: config.chain,
         walletType: "private",
       });

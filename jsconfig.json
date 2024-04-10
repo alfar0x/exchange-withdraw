@@ -4,6 +4,7 @@
   "compilerOptions": {
     "checkJs": true,
     "module": "CommonJS",
-    "target": "es2021"
+    "target": "es2021",
+    "lib": ["ES2023"]
   },
 }
