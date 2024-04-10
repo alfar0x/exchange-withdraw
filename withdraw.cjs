@@ -111,8 +111,7 @@ const main = async () => {
   const data = fs
     .readFileSync("data.csv", { encoding: "utf-8" })
     .split(/\r?\n/)
-    .filter(Boolean)
-    .map((i) => i.trim().split(","));
+    .filter(Boolean);
 
   const avgSleepSec = (config.minutedToEnd / data.length) * 60;
 
@@ -139,7 +138,7 @@ const main = async () => {
   await sleep(10);
 
   for (let idx = 0; idx < data.length; idx += 1) {
-    const [address, amountStr] = data[idx];
+    const [address, amountStr] = data[idx].trim().split(",");
 
     console.log(`${idx} ${address} ${amountStr}`);
 
