@@ -8,11 +8,13 @@ import {
   readByLine,
   sleep,
 } from "@alfar/helpers";
-import tokens from "./tokens.js";
 
-const MINUTES_TO_END = 8 * 60;
-const APPROX_PERCENT = 10;
-const { symbol, network, chain } = tokens.linea.eth;
+const MINUTES_TO_END = 3 * 24 * 60;
+const APPROX_PERCENT = 50;
+
+const SYMBOL = "MATIC";
+const NETWORK = "MATIC";
+const CHAIN = "MATIC-Polygon";
 
 const FILE_PR_KEYS = "data.csv";
 
@@ -33,7 +35,7 @@ const main = async () => {
 
   const currencies = await exchange.fetchCurrencies();
 
-  const { fee } = currencies[symbol].networks[network];
+  const { fee } = currencies[SYMBOL].networks[NETWORK];
 
   const avgSleepSec = (MINUTES_TO_END / data.length) * 60;
 
@@ -41,12 +43,18 @@ const main = async () => {
 
   const maxSleepSec = Math.round((avgSleepSec * (100 + APPROX_PERCENT)) / 100);
 
+  const approxEnd = formatRel(data.length * avgSleepSec);
+
   const welcomeMsg = [
+    `symbol ${SYMBOL}`,
+    `network ${NETWORK}`,
+    `chain ${CHAIN}`,
     `fee ${fee}`,
-    `min sleep ${minSleepSec}s`,
-    `max sleep ${maxSleepSec}s`,
     `lines found ${data.length}`,
-  ].join(" | ");
+    `min sleep ${minSleepSec}s`,
+    `avg sleep ${maxSleepSec}s`,
+    `approx end ${approxEnd}`,
+  ].join("\n");
 
   logger.info(welcomeMsg);
 
@@ -59,15 +67,15 @@ const main = async () => {
 
     try {
       const params = {
-        chain,
+        chain: CHAIN,
         fee,
-        network,
+        network: NETWORK,
         password: FUNDING_PASSWORD,
         toAddress: address,
       };
 
       const response = await exchange.withdraw(
-        symbol,
+        SYMBOL,
         amount,
         address,
         "",
