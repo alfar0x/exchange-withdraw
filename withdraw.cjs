@@ -28,7 +28,7 @@ const formatDistance = (seconds) => {
 
   const unitValues = [1, 60, 3600, 86400];
 
-  const index = units.findLastIndex((_, idx) => seconds >= unitValues[idx]);
+  const index = unitValues.findLastIndex((s) => seconds >= s);
 
   if (index === -1) return "0s";
 
