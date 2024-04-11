@@ -7,7 +7,7 @@ const config = {
   apiKey: "",
   secret: "",
   password: "",
-  minutedToEnd: 3 * 24 * 60,
+  minutesToEnd: 3 * 24 * 60,
   approxPercent: 50,
 };
 
@@ -106,7 +106,7 @@ const main = async () => {
     .split(/\r?\n/)
     .filter(Boolean);
 
-  const avgSleepSec = (config.minutedToEnd / data.length) * 60;
+  const avgSleepSec = (config.minutesToEnd / data.length) * 60;
   const deltaSec = avgSleepSec * (config.approxPercent / 100);
   const minSleepSec = Math.round(avgSleepSec - deltaSec);
   const maxSleepSec = Math.round(avgSleepSec + deltaSec);
