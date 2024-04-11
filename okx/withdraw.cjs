@@ -11,6 +11,8 @@ const config = {
   approxPercent: 50,
 };
 
+const FOLDER = "okx";
+
 const sleep = (s) => new Promise((r) => setTimeout(r, Math.round(s * 1000)));
 
 const timenow = () => {
@@ -92,7 +94,9 @@ const main = async () => {
     .sort((a, b) => a.localeCompare(b))
     .join("\n");
 
-  fs.writeFileSync("currencies.csv", currenciesStr, { encoding: "utf-8" });
+  fs.writeFileSync(`${FOLDER}/currencies.csv`, currenciesStr, {
+    encoding: "utf-8",
+  });
 
   const currency = currencies.find(
     (c) => c.ccy === config.token && c.chain === config.chain
@@ -102,7 +106,7 @@ const main = async () => {
   if (!currency.canWd) throw new Error("currency is not withdrawable");
 
   const data = fs
-    .readFileSync("data.csv", { encoding: "utf-8" })
+    .readFileSync(`${FOLDER}/data.csv`, { encoding: "utf-8" })
     .split(/\r?\n/)
     .filter(Boolean);
 
