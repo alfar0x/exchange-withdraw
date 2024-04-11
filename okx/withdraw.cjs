@@ -2,7 +2,7 @@ const fs = require("fs");
 const { createHmac, randomInt } = require("crypto");
 
 const config = {
-  ccy: "MATIC",
+  token: "MATIC",
   chain: "MATIC-Polygon",
   apiKey: "",
   secret: "",
@@ -95,7 +95,7 @@ const main = async () => {
   fs.writeFileSync("currencies.csv", currenciesStr, { encoding: "utf-8" });
 
   const currency = currencies.find(
-    (c) => c.ccy === config.ccy && c.chain === config.chain
+    (c) => c.ccy === config.token && c.chain === config.chain
   );
 
   if (!currency) throw new Error("currency is not found");
@@ -112,7 +112,7 @@ const main = async () => {
   const maxSleepSec = Math.round(avgSleepSec + deltaSec);
 
   const welcomeMsg = [
-    `ccy ${config.ccy}`,
+    `ccy ${config.token}`,
     `chain ${config.chain}`,
     `fee ${currency.minFee}`,
     `accounts ${data.length}`,
@@ -132,7 +132,7 @@ const main = async () => {
 
     try {
       await req("POST", "asset/withdrawal", {
-        ccy: config.ccy,
+        ccy: config.token,
         amt: amountStr,
         dest: 4,
         toAddr: address,
