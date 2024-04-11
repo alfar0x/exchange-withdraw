@@ -107,14 +107,9 @@ const main = async () => {
     .filter(Boolean);
 
   const avgSleepSec = (config.minutedToEnd / data.length) * 60;
-
-  const minSleepSec = Math.round(
-    (avgSleepSec * (100 - config.approxPercent)) / 100
-  );
-
-  const maxSleepSec = Math.round(
-    (avgSleepSec * (100 + config.approxPercent)) / 100
-  );
+  const deltaSec = avgSleepSec * (config.approxPercent / 100);
+  const minSleepSec = Math.round(avgSleepSec - deltaSec);
+  const maxSleepSec = Math.round(avgSleepSec + deltaSec);
 
   const welcomeMsg = [
     `ccy ${config.ccy}`,
@@ -146,7 +141,7 @@ const main = async () => {
         walletType: "private",
       });
     } catch (err) {
-      console.error(err.message);
+      console.error(`ERROR | ${err?.message}`);
     }
 
     if (idx === data.length - 1) continue;
